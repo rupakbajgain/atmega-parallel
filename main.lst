@@ -1,0 +1,167 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  69               	.global	test1
+  71               	test1:
+   1:main.c        **** #include <avr/io.h>
+   2:main.c        **** #include <avr/interrupt.h>
+   3:main.c        **** #define F_CPU 1000000
+   4:main.c        **** #include <util/delay.h>
+   5:main.c        **** 
+   6:main.c        **** // Func addr,Stack addr,parameter,priority
+   7:main.c        **** void setStackBase(void*,int,void*,void*,int);
+   8:main.c        **** int createThread(void* f,void* par){
+   9:main.c        **** static int i=1;
+  10:main.c        **** 	setStackBase(f,i,(void*)(RAMEND-1-1-24-2*24-i*64/*64 now,until mallocator*/),par,0x10);
+  11:main.c        **** 	return i++;
+  12:main.c        **** }
+  13:main.c        **** 
+  14:main.c        **** void test1(int a){
+  72               	rame size = 0 */
+  73               		mov r25,r24
+  74               	.L2:
+  76               	.LM1:
+  77 0000 982F      		in r24,59-32
+  78               		eor r24,r25
+  15:main.c        **** 	while(1){PORTA ^=a;};
+  79               	FBB1
+  80               	.LM0:
+  81 0002 8BB3      	.LFBB1:
+  82 0004 8927      	/* prologue: function */
+  83 0006 8BBB      	/* frame size = 0 */
+  84 0008 00C0      		mov r25,r24
+  85               	.L2:
+  87               	.LM1:
+  88               		in r24,59-32
+  89               		eor r24,r25
+  90               		out 59-32,r24
+  91               		rjmp .L2
+  93               	.Lscope1:
+  97 000c 1F93      	.global	createThread
+  99               	createThread:
+ 101               	.LM2:
+ 102               	.LFBB2:
+ 103 0010 6091 0000 		push r16
+ 104 0014 7091 0000 		push r17
+ 105 0018 AB01      	/* prologue: function */
+ 106 001a E6E0      	/* frame size = 0 */
+ 107 001c 440F      		movw r18,r22
+ 109 0020 EA95      	.LM3:
+ 110 0022 01F4      		lds r22,i.1251
+ 111 0024 5095      		lds r23,i.1251+1
+ 112 0026 4195      		movw r20,r22
+ 113 0028 5F4F      		ldi r30,6
+ 114 002a 4B5E      	1:	lsl r20
+ 115 002c 574F      		rol r21
+ 116 002e 00E1      		dec r30
+ 117 0030 10E0      		brne 1b
+ 118 0032 0E94 0000 		com r21
+ 119               		neg r20
+ 120               		sbci r21,lo8(-1)
+ 121 0036 2091 0000 		subi r20,lo8(-(2069))
+ 122 003a 3091 0000 		sbci r21,hi8(-(2069))
+ 123 003e 2F5F      		ldi r16,lo8(16)
+ 124 0040 3F4F      		ldi r17,hi8(16)
+ 125 0042 3093 0000 		call setStackBase
+ 127 004a 2150      	.LM4:
+ 128 004c 3040      		lds r18,i.1251
+ 129               		lds r19,(i.1251)+1
+ 130               		subi r18,lo8(-(1))
+ 131 004e C901      		sbci r19,hi8(-(1))
+ 132               		sts (i.1251)+1,r19
+ 133 0050 1F91      		sts i.1251,r18
+ 134 0052 0F91      		subi r18,lo8(-(-1))
+ 135 0054 0895      		sbci r19,hi8(-(-1))
+ 137               	.LM5:
+ 138               		movw r24,r18
+ 139               	/* epilogue start */
+ 140               		pop r17
+ 141               		pop r16
+ 142               		ret
+  16:main.c        **** }
+  17:main.c        **** 
+  18:main.c        **** void init(void){
+ 145               	p r17
+ 146               		pop r16
+ 147               		ret
+  19:main.c        **** 	DDRA=0xFF;
+ 152               	"i:V(0,1)",38,0,0,i.1251
+ 155 005c 8ABB      	.Lscope2:
+  20:main.c        **** 	PORTA=0x00;
+ 156               	38,0,0,i.1251
+  21:main.c        **** 	createThread(&test1,(void*)1);
+ 159               	"i:V(0,1)",38,0,0,i.1251
+ 162 0062 10E0      	.Lscope2:
+ 164 0066 61E0      	.global	init
+ 166 006a 0E94 0000 	init:
+  22:main.c        **** 	createThread(&test1,(void*)2);
+ 167               	pe2:
+ 169 006e C801      	.global	init
+ 171 0072 70E0      	init:
+  23:main.c        **** 	createThread(&test1,(void*)4);
+ 173               	6,0,0,init
+ 174               	.global	init
+ 176 007a 64E0      	init:
+ 178 007e 0E94 0000 	.LM6:
+  24:main.c        **** 	createThread(&test1,(void*)8);
+ 179               	nit
+ 180               	.global	init
+ 182 0084 68E0      	init:
+ 184 0088 0E94 0000 	.LM6:
+  25:main.c        **** 	createThread(&test1,(void*)16);
+ 185               	nit
+ 186               	.global	init
+ 188 008e 60E1      	init:
+ 190 0092 0E94 0000 	.LM6:
+  26:main.c        **** 	createThread(&test1,(void*)32);
+ 191               	nit
+ 192               	.global	init
+ 194 0098 60E2      	init:
+ 196 009c 0E94 0000 	.LM6:
+  27:main.c        **** 	createThread(&test1,(void*)64);
+ 197               	nit
+ 198               	.global	init
+ 200 00a2 60E4      	init:
+ 202 00a6 0E94 0000 	.LM6:
+  28:main.c        **** 	createThread(&test1,(void*)128);
+ 203               	nit
+ 204               	.global	init
+ 206 00ac 60E8      	init:
+ 208 00b0 0E94 0000 	.LM6:
+ 209               	.LFBB3:
+  29:main.c        **** }
+ 210               	al	init
+ 212 00b4 1F91      	init:
+ 214 00b8 0895      	.LM6:
+ 215               	.LFBB3:
+ 216               		push r16
+ 217               		push r17
+ 218               	/* prologue: function */
+ 219               	/* frame size = 0 */
+ 221 0000 0100      	.LM7:
+ 222               		ldi r24,lo8(-1)
+ 223               		out 58-32,r24
+ 225               	.LM8:
+ 226               		out 59-32,__zero_reg__
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:2      *ABS*:0000003f __SREG__
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:3      *ABS*:0000003e __SP_H__
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:4      *ABS*:0000003d __SP_L__
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:5      *ABS*:00000034 __CCP__
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:71     .text:00000000 test1
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:92     .text:0000000a createThread
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:220    .data:00000000 i.1251
+C:\Users\user\AppData\Local\Temp/ccnRagLp.s:144    .text:00000056 init
+
+UNDEFINED SYMBOLS
+setStackBase
+__do_copy_data

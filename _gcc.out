@@ -1,0 +1,69 @@
+set -e; avr-gcc -MM -mmcu=atmega32 -I. -std=gnu99 -Os -gstabs -Wa,-adhlns=main.lst -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums  -Wall -Wstrict-prototypes main.c \
+	| sed 's,\(.*\)\.o[ :]*,\1.o \1.d : ,g' > main.d; \
+	[ -s main.d ] || rm -f main.d
+
+-------- begin --------
+avr-gcc (WinAVR 20100110) 4.3.3
+Copyright (C) 2008 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Size before:
+os.elf  :
+section    size      addr
+.text       648         0
+.data         2   8388704
+.stab      2928         0
+.stabstr   1784         0
+Total      5362
+
+
+
+
+Compiling: main.c
+avr-gcc -c -mmcu=atmega32 -I. -std=gnu99 -Os -gstabs -Wa,-adhlns=main.lst -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums  -Wall -Wstrict-prototypes main.c -o main.o
+
+Linking: os.elf
+avr-gcc -mmcu=atmega32 -I. -std=gnu99 -Os -gstabs -Wa,-adhlns=main.o -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums  -Wall -Wstrict-prototypes main.o asm.o --output os.elf -Wl,-Map=os.map -Wl,--cref
+
+Creating load file for Flash: os.hex
+avr-objcopy -O ihex -R .eeprom os.elf os.hex
+
+Creating load file for EEPROM: os.eep
+avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" \
+	--change-section-lma .eeprom=0 -O ihex os.elf os.eep
+c:\winavr\bin\avr-objcopy.exe: --change-section-lma .eeprom=0x00000000 never used
+
+Creating Extended Listing: os.lss
+avr-objdump -h -S os.elf > os.lss
+
+Creating Symbol Table: os.sym
+avr-nm -n os.elf > os.sym
+
+Converting to AVR COFF: os.cof
+avr-objcopy --debugging --change-section-address .data-0x800000 --change-section-address .bss-0x800000 --change-section-address .noinit-0x800000 --change-section-address .eeprom-0x810000 -O coff-ext-avr os.elf os.cof   # Extended COFF. Supported in VMLAB from rel. 3.10
+Discarding local symbol outside any compilation unit: .do_copy_data_start
+Discarding local symbol outside any compilation unit: .do_copy_data_loop
+Warning: file C:\Users\user\AppData\Local\Temp/cczqxZbO.s not found in symbol table, ignoring
+c:\winavr\bin\avr-objcopy.exe: --change-section-vma .eeprom+0xff7f0000 never used
+c:\winavr\bin\avr-objcopy.exe: --change-section-lma .eeprom+0xff7f0000 never used
+c:\winavr\bin\avr-objcopy.exe: --change-section-vma .noinit+0xff800000 never used
+c:\winavr\bin\avr-objcopy.exe: --change-section-lma .noinit+0xff800000 never used
+c:\winavr\bin\avr-objcopy.exe: --change-section-vma .bss+0xff800000 never used
+c:\winavr\bin\avr-objcopy.exe: --change-section-lma .bss+0xff800000 never used
+
+Size after:
+os.elf  :
+section    size      addr
+.text       638         0
+.data         2   8388704
+.stab      2892         0
+.stabstr   1729         0
+Total      5261
+
+
+
+Errors: none
+-------- end --------
+

@@ -1,0 +1,37 @@
+; ************************************************************
+; PROJECT:
+; AUTHOR:
+; ************************************************************
+
+; Micro + software running
+; ------------------------------------------------------------
+.MICRO "ATmega32"
+.TOOLCHAIN "GCC"
+.GCCPATH   "C:\WinAVR"
+.GCCMAKE   AUTO
+.TARGET    "os.hex"
+.SOURCE    "asm.S" "main.C"
+
+.TRACE              ; Activate micro trace
+
+; Following lines are optional; if not included
+; exactly these values are taken by default
+; ------------------------------------------------------------
+.POWER VDD=5 VSS=0  ; Power nodes
+.CLOCK 1meg         ; Micro clock
+.STORE 250m         ; Trace (micro+signals) storage time
+
+; Micro nodes: RESET, AREF, PA0-PA7, PB0-PB7, PC0-PC7, PD0-PD7, ACO, TIM1OVF
+; Define here the hardware around the micro
+; ------------------------------------------------------------
+
+D1 VDD PA0  ; x: Panel LEDs 1 - 8
+D2 VDD PA1  ; x: Panel LEDs 1 - 8
+D3 VDD PA2  ; x: Panel LEDs 1 - 8
+D4 VDD PA3  ; x: Panel LEDs 1 - 8
+D5 VDD PA4  ; x: Panel LEDs 1 - 8
+D6 VDD PA5  ; x: Panel LEDs 1 - 8
+D7 VDD PA6  ; x: Panel LEDs 1 - 8
+D8 VDD PA7  ; x: Panel LEDs 1 - 8
+
+

@@ -1,0 +1,535 @@
+
+os.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000027e  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000002  00800060  0000027e  000002f2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .stab         00000b4c  00000000  00000000  000002f4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  3 .stabstr      000006c1  00000000  00000000  00000e40  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+   8:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+   c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  10:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  14:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  18:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  1c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  20:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  24:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  28:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  2c:	0c 94 b3 00 	jmp	0x166	; 0x166 <__vector_11>
+  30:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  34:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  38:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  3c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  40:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  44:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  48:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  4c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  50:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_copy_data>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	ee e7       	ldi	r30, 0x7E	; 126
+  68:	f2 e0       	ldi	r31, 0x02	; 2
+  6a:	02 c0       	rjmp	.+4      	; 0x70 <.do_copy_data_start>
+
+0000006c <.do_copy_data_loop>:
+  6c:	05 90       	lpm	r0, Z+
+  6e:	0d 92       	st	X+, r0
+
+00000070 <.do_copy_data_start>:
+  70:	a2 36       	cpi	r26, 0x62	; 98
+  72:	b1 07       	cpc	r27, r17
+  74:	d9 f7       	brne	.-10     	; 0x6c <.do_copy_data_loop>
+  76:	0e 94 28 01 	call	0x250	; 0x250 <main>
+  7a:	0c 94 3d 01 	jmp	0x27a	; 0x27a <_exit>
+
+0000007e <__bad_interrupt>:
+  7e:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+00000082 <test1>:
+static int i=1;
+	setStackBase(f,i,(void*)(RAMEND-1-1-24-2*24-i*64/*64 now,until mallocator*/),par,0x10);
+	return i++;
+}
+
+void test1(int a){
+  82:	98 2f       	mov	r25, r24
+	while(1){PORTA ^=a;};
+  84:	8b b3       	in	r24, 0x1b	; 27
+  86:	89 27       	eor	r24, r25
+  88:	8b bb       	out	0x1b, r24	; 27
+  8a:	fc cf       	rjmp	.-8      	; 0x84 <test1+0x2>
+
+0000008c <createThread>:
+#define F_CPU 1000000
+#include <util/delay.h>
+
+// Func addr,Stack addr,parameter,priority
+void setStackBase(void*,int,void*,void*,int);
+int createThread(void* f,void* par){
+  8c:	0f 93       	push	r16
+  8e:	1f 93       	push	r17
+  90:	9b 01       	movw	r18, r22
+static int i=1;
+	setStackBase(f,i,(void*)(RAMEND-1-1-24-2*24-i*64/*64 now,until mallocator*/),par,0x10);
+  92:	60 91 60 00 	lds	r22, 0x0060
+  96:	70 91 61 00 	lds	r23, 0x0061
+  9a:	ab 01       	movw	r20, r22
+  9c:	e6 e0       	ldi	r30, 0x06	; 6
+  9e:	44 0f       	add	r20, r20
+  a0:	55 1f       	adc	r21, r21
+  a2:	ea 95       	dec	r30
+  a4:	e1 f7       	brne	.-8      	; 0x9e <createThread+0x12>
+  a6:	50 95       	com	r21
+  a8:	41 95       	neg	r20
+  aa:	5f 4f       	sbci	r21, 0xFF	; 255
+  ac:	4b 5e       	subi	r20, 0xEB	; 235
+  ae:	57 4f       	sbci	r21, 0xF7	; 247
+  b0:	00 e1       	ldi	r16, 0x10	; 16
+  b2:	10 e0       	ldi	r17, 0x00	; 0
+  b4:	0e 94 9e 00 	call	0x13c	; 0x13c <setStackBase>
+	return i++;
+  b8:	20 91 60 00 	lds	r18, 0x0060
+  bc:	30 91 61 00 	lds	r19, 0x0061
+  c0:	2f 5f       	subi	r18, 0xFF	; 255
+  c2:	3f 4f       	sbci	r19, 0xFF	; 255
+  c4:	30 93 61 00 	sts	0x0061, r19
+  c8:	20 93 60 00 	sts	0x0060, r18
+  cc:	21 50       	subi	r18, 0x01	; 1
+  ce:	30 40       	sbci	r19, 0x00	; 0
+}
+  d0:	c9 01       	movw	r24, r18
+  d2:	1f 91       	pop	r17
+  d4:	0f 91       	pop	r16
+  d6:	08 95       	ret
+
+000000d8 <init>:
+
+void test1(int a){
+	while(1){PORTA ^=a;};
+}
+
+void init(void){
+  d8:	0f 93       	push	r16
+  da:	1f 93       	push	r17
+	DDRA=0xFF;
+  dc:	8f ef       	ldi	r24, 0xFF	; 255
+  de:	8a bb       	out	0x1a, r24	; 26
+	PORTA=0x00;
+  e0:	1b ba       	out	0x1b, r1	; 27
+	createThread(&test1,(void*)1);
+  e2:	01 e4       	ldi	r16, 0x41	; 65
+  e4:	10 e0       	ldi	r17, 0x00	; 0
+  e6:	c8 01       	movw	r24, r16
+  e8:	61 e0       	ldi	r22, 0x01	; 1
+  ea:	70 e0       	ldi	r23, 0x00	; 0
+  ec:	0e 94 46 00 	call	0x8c	; 0x8c <createThread>
+	createThread(&test1,(void*)2);
+  f0:	c8 01       	movw	r24, r16
+  f2:	62 e0       	ldi	r22, 0x02	; 2
+  f4:	70 e0       	ldi	r23, 0x00	; 0
+  f6:	0e 94 46 00 	call	0x8c	; 0x8c <createThread>
+	createThread(&test1,(void*)4);
+  fa:	c8 01       	movw	r24, r16
+  fc:	64 e0       	ldi	r22, 0x04	; 4
+  fe:	70 e0       	ldi	r23, 0x00	; 0
+ 100:	0e 94 46 00 	call	0x8c	; 0x8c <createThread>
+	createThread(&test1,(void*)8);
+ 104:	c8 01       	movw	r24, r16
+ 106:	68 e0       	ldi	r22, 0x08	; 8
+ 108:	70 e0       	ldi	r23, 0x00	; 0
+ 10a:	0e 94 46 00 	call	0x8c	; 0x8c <createThread>
+	createThread(&test1,(void*)16);
+ 10e:	c8 01       	movw	r24, r16
+ 110:	60 e1       	ldi	r22, 0x10	; 16
+ 112:	70 e0       	ldi	r23, 0x00	; 0
+ 114:	0e 94 46 00 	call	0x8c	; 0x8c <createThread>
+	createThread(&test1,(void*)32);
+ 118:	c8 01       	movw	r24, r16
+ 11a:	60 e2       	ldi	r22, 0x20	; 32
+ 11c:	70 e0       	ldi	r23, 0x00	; 0
+ 11e:	0e 94 46 00 	call	0x8c	; 0x8c <createThread>
+	createThread(&test1,(void*)64);
+ 122:	c8 01       	movw	r24, r16
+ 124:	60 e4       	ldi	r22, 0x40	; 64
+ 126:	70 e0       	ldi	r23, 0x00	; 0
+ 128:	0e 94 46 00 	call	0x8c	; 0x8c <createThread>
+	createThread(&test1,(void*)128);
+ 12c:	c8 01       	movw	r24, r16
+ 12e:	60 e8       	ldi	r22, 0x80	; 128
+ 130:	70 e0       	ldi	r23, 0x00	; 0
+ 132:	0e 94 46 00 	call	0x8c	; 0x8c <createThread>
+}
+ 136:	1f 91       	pop	r17
+ 138:	0f 91       	pop	r16
+ 13a:	08 95       	ret
+
+0000013c <setStackBase>:
+;22=i
+;20=stack
+;18=par
+;16=priority
+	;make sure r1=0
+	ldi r30,lo8(TPRIORITY_BASE)
+ 13c:	ed e5       	ldi	r30, 0x5D	; 93
+	ldi r31,hi8(TPRIORITY_BASE)
+ 13e:	f8 e0       	ldi	r31, 0x08	; 8
+	sub r30,r22
+ 140:	e6 1b       	sub	r30, r22
+	;sbc r31,r1
+	st z,r16
+ 142:	00 83       	st	Z, r16
+	ldi r30,lo8(SP_BACKUP_BASE)
+ 144:	e5 e4       	ldi	r30, 0x45	; 69
+	;ldi r31,hi8(SP_BACKUP_BASE)   ;z=SP_BACKUP_BASE
+	lsl r22               ;22(i) is 2*i now
+ 146:	66 0f       	add	r22, r22
+	sub r30,r22
+ 148:	e6 1b       	sub	r30, r22
+	sbc r31,r1                    ;z==CURRENT_SP_BACKUP
+ 14a:	f1 09       	sbc	r31, r1
+	movw r26,r20           ;save 21:20 to 27:26
+ 14c:	da 01       	movw	r26, r20
+	sbiw r26,35                   ;z=StackAddr-35
+ 14e:	93 97       	sbiw	r26, 0x23	; 35
+	st z,r26
+ 150:	a0 83       	st	Z, r26
+	st -z,r27
+ 152:	b2 93       	st	-Z, r27
+	;;
+	movw r30,r26           ; 31:30=27:26
+ 154:	fd 01       	movw	r30, r26
+	;set sreg to 0,simulator complains
+	std z+1,r1
+ 156:	11 82       	std	Z+1, r1	; 0x01
+   ;set r1=0 before calling C
+	std z+3,r1
+ 158:	13 82       	std	Z+3, r1	; 0x03
+	;r25:r24 is parameter  in our r19:r18
+	std z+27,r19
+ 15a:	33 8f       	std	Z+27, r19	; 0x1b
+	std z+26,r18
+ 15c:	22 8f       	std	Z+26, r18	; 0x1a
+	movw r30,r20
+ 15e:	fa 01       	movw	r30, r20
+	;;;;Pointer here
+	st z,r24                       ;z=func()
+ 160:	80 83       	st	Z, r24
+	st -z,r25
+ 162:	92 93       	st	-Z, r25
+ret
+ 164:	08 95       	ret
+
+00000166 <__vector_11>:
+
+.section .text
+.global TIMER0_OVF_vect
+TIMER0_OVF_vect:
+;is context switch required???
+	push r31
+ 166:	ff 93       	push	r31
+	push r30
+ 168:	ef 93       	push	r30
+	clr r30
+ 16a:	ee 27       	eor	r30, r30
+	lds r31,ENERGY
+ 16c:	f0 91 5e 08 	lds	r31, 0x085E
+	cp r31,r30
+ 170:	fe 17       	cp	r31, r30
+	breq 2f
+ 172:	31 f0       	breq	.+12     	; 0x180 <__vector_11+0x1a>
+	dec r31
+ 174:	fa 95       	dec	r31
+	sts ENERGY,r31
+ 176:	f0 93 5e 08 	sts	0x085E, r31
+	pop r31
+ 17a:	ff 91       	pop	r31
+	pop r30
+ 17c:	ef 91       	pop	r30
+	reti
+ 17e:	18 95       	reti
+	2:
+   push r29
+ 180:	df 93       	push	r29
+   push r28
+ 182:	cf 93       	push	r28
+   push r27
+ 184:	bf 93       	push	r27
+   push r26
+ 186:	af 93       	push	r26
+   push r25
+ 188:	9f 93       	push	r25
+   push r24
+ 18a:	8f 93       	push	r24
+   push r23
+ 18c:	7f 93       	push	r23
+   push r22
+ 18e:	6f 93       	push	r22
+   push r21
+ 190:	5f 93       	push	r21
+   push r20
+ 192:	4f 93       	push	r20
+   push r19
+ 194:	3f 93       	push	r19
+   push r18
+ 196:	2f 93       	push	r18
+   push r17
+ 198:	1f 93       	push	r17
+   push r16
+ 19a:	0f 93       	push	r16
+   push r15
+ 19c:	ff 92       	push	r15
+   push r14
+ 19e:	ef 92       	push	r14
+   push r13
+ 1a0:	df 92       	push	r13
+   push r12
+ 1a2:	cf 92       	push	r12
+   push r11
+ 1a4:	bf 92       	push	r11
+   push r10
+ 1a6:	af 92       	push	r10
+   push r9
+ 1a8:	9f 92       	push	r9
+   push r8
+ 1aa:	8f 92       	push	r8
+   push r7
+ 1ac:	7f 92       	push	r7
+   push r6
+ 1ae:	6f 92       	push	r6
+   push r5
+ 1b0:	5f 92       	push	r5
+   push r4
+ 1b2:	4f 92       	push	r4
+   push r3
+ 1b4:	3f 92       	push	r3
+   push r2
+ 1b6:	2f 92       	push	r2
+   push r1
+ 1b8:	1f 92       	push	r1
+   push r0
+ 1ba:	0f 92       	push	r0
+   in r17,SREG
+ 1bc:	1f b7       	in	r17, 0x3f	; 63
+   push r17
+ 1be:	1f 93       	push	r17
+;Context switch next
+	lds r24,TASK_INDEX
+ 1c0:	80 91 5f 08 	lds	r24, 0x085F
+	clr r1
+ 1c4:	11 24       	eor	r1, r1
+	ldi r30,lo8(SP_BACKUP_BASE)
+ 1c6:	e5 e4       	ldi	r30, 0x45	; 69
+	ldi r31,hi8(SP_BACKUP_BASE)
+ 1c8:	f8 e0       	ldi	r31, 0x08	; 8
+	lsl r24
+ 1ca:	88 0f       	add	r24, r24
+	sub r30,r24
+ 1cc:	e8 1b       	sub	r30, r24
+	sbc r31,r1
+ 1ce:	f1 09       	sbc	r31, r1
+	in r17,SPL
+ 1d0:	1d b7       	in	r17, 0x3d	; 61
+	st z,r17
+ 1d2:	10 83       	st	Z, r17
+	in r17,SPH
+ 1d4:	1e b7       	in	r17, 0x3e	; 62
+	st -z,r17
+ 1d6:	12 93       	st	-Z, r17
+	lsr r24
+ 1d8:	86 95       	lsr	r24
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;Scheduling
+0:
+dec r24
+ 1da:	8a 95       	dec	r24
+brmi 1f
+ 1dc:	0a f0       	brmi	.+2      	; 0x1e0 <__vector_11+0x7a>
+rjmp 2f
+ 1de:	01 c0       	rjmp	.+2      	; 0x1e2 <__vector_11+0x7c>
+1:
+ldi r24,(MAX_THREADS-1)
+ 1e0:	87 e1       	ldi	r24, 0x17	; 23
+2:
+ldi r30,lo8(TPRIORITY_BASE)
+ 1e2:	ed e5       	ldi	r30, 0x5D	; 93
+ldi r31,hi8(TPRIORITY_BASE)
+ 1e4:	f8 e0       	ldi	r31, 0x08	; 8
+sub r30,r24
+ 1e6:	e8 1b       	sub	r30, r24
+ld r16,z   ;energy read here
+ 1e8:	00 81       	ld	r16, Z
+cp r16,r1
+ 1ea:	01 15       	cp	r16, r1
+breq 0b
+ 1ec:	b1 f3       	breq	.-20     	; 0x1da <__vector_11+0x74>
+sts ENERGY,r16
+ 1ee:	00 93 5e 08 	sts	0x085E, r16
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   sts TASK_INDEX,r24
+ 1f2:	80 93 5f 08 	sts	0x085F, r24
+   ldi r30,lo8(SP_BACKUP_BASE)
+ 1f6:	e5 e4       	ldi	r30, 0x45	; 69
+	ldi r31,hi8(SP_BACKUP_BASE)
+ 1f8:	f8 e0       	ldi	r31, 0x08	; 8
+	lsl r24
+ 1fa:	88 0f       	add	r24, r24
+	sub r30,r24                ;r24 is not used downward
+ 1fc:	e8 1b       	sub	r30, r24
+	sbc r31,r1
+ 1fe:	f1 09       	sbc	r31, r1
+	ld r17,z
+ 200:	10 81       	ld	r17, Z
+	out SPL,r17
+ 202:	1d bf       	out	0x3d, r17	; 61
+	ld r17,-z
+ 204:	12 91       	ld	r17, -Z
+	out SPH,r17
+ 206:	1e bf       	out	0x3e, r17	; 62
+;Context switched
+	pop r17
+ 208:	1f 91       	pop	r17
+	cbr r17,7               ;cli first
+ 20a:	18 7f       	andi	r17, 0xF8	; 248
+	out SREG,r17
+ 20c:	1f bf       	out	0x3f, r17	; 63
+   pop r0
+ 20e:	0f 90       	pop	r0
+   pop r1
+ 210:	1f 90       	pop	r1
+   pop r2
+ 212:	2f 90       	pop	r2
+   pop r3
+ 214:	3f 90       	pop	r3
+   pop r4
+ 216:	4f 90       	pop	r4
+   pop r5
+ 218:	5f 90       	pop	r5
+   pop r6
+ 21a:	6f 90       	pop	r6
+   pop r7
+ 21c:	7f 90       	pop	r7
+   pop r8
+ 21e:	8f 90       	pop	r8
+   pop r9
+ 220:	9f 90       	pop	r9
+   pop r10
+ 222:	af 90       	pop	r10
+   pop r11
+ 224:	bf 90       	pop	r11
+   pop r12
+ 226:	cf 90       	pop	r12
+   pop r13
+ 228:	df 90       	pop	r13
+   pop r14
+ 22a:	ef 90       	pop	r14
+   pop r15
+ 22c:	ff 90       	pop	r15
+   pop r16
+ 22e:	0f 91       	pop	r16
+   pop r17
+ 230:	1f 91       	pop	r17
+   pop r18
+ 232:	2f 91       	pop	r18
+   pop r19
+ 234:	3f 91       	pop	r19
+   pop r20
+ 236:	4f 91       	pop	r20
+   pop r21
+ 238:	5f 91       	pop	r21
+   pop r22
+ 23a:	6f 91       	pop	r22
+   pop r23
+ 23c:	7f 91       	pop	r23
+   pop r24
+ 23e:	8f 91       	pop	r24
+   pop r25
+ 240:	9f 91       	pop	r25
+   pop r26
+ 242:	af 91       	pop	r26
+   pop r27
+ 244:	bf 91       	pop	r27
+   pop r28
+ 246:	cf 91       	pop	r28
+   pop r29
+ 248:	df 91       	pop	r29
+   pop r30
+ 24a:	ef 91       	pop	r30
+   pop r31
+ 24c:	ff 91       	pop	r31
+reti
+ 24e:	18 95       	reti
+
+00000250 <main>:
+
+.section .text
+.global main
+main:
+ldi r24,2  ;initilizing timer0
+ 250:	82 e0       	ldi	r24, 0x02	; 2
+out TCCR0,r24
+ 252:	83 bf       	out	0x33, r24	; 51
+ldi r20,(1<<TOIE0)
+ 254:	41 e0       	ldi	r20, 0x01	; 1
+out TIMSK,r20 ;timer initialization complete
+ 256:	49 bf       	out	0x39, r20	; 57
+;Set stack for main thread
+ldi r20,hi8(STACK_START)
+ 258:	48 e0       	ldi	r20, 0x08	; 8
+out SPH,r20
+ 25a:	4e bf       	out	0x3e, r20	; 62
+ldi r20,lo8(STACK_START)
+ 25c:	45 e1       	ldi	r20, 0x15	; 21
+out SPL,r20
+ 25e:	4d bf       	out	0x3d, r20	; 61
+;initialization here
+clr r1
+ 260:	11 24       	eor	r1, r1
+ldi r30,lo8(TPRIORITY_BASE+1)
+ 262:	ee e5       	ldi	r30, 0x5E	; 94
+ldi r31,hi8(TPRIORITY_BASE+1)
+ 264:	f8 e0       	ldi	r31, 0x08	; 8
+ldi r16,(MAX_THREADS+1)    ;setting all priority to 0
+ 266:	09 e1       	ldi	r16, 0x19	; 25
+1:
+st -z,r1
+ 268:	12 92       	st	-Z, r1
+dec r16
+ 26a:	0a 95       	dec	r16
+brne 1b
+ 26c:	e9 f7       	brne	.-6      	; 0x268 <main+0x18>
+sts TASK_INDEX,r1
+ 26e:	10 92 5f 08 	sts	0x085F, r1
+call init
+ 272:	0e 94 6c 00 	call	0xd8	; 0xd8 <init>
+sei           ;enable interrupt
+ 276:	78 94       	sei
+1: rjmp 1b
+ 278:	ff cf       	rjmp	.-2      	; 0x278 <main+0x28>
+
+0000027a <_exit>:
+ 27a:	f8 94       	cli
+
+0000027c <__stop_program>:
+ 27c:	ff cf       	rjmp	.-2      	; 0x27c <__stop_program>
